@@ -6,20 +6,20 @@ const thoughtSchema = new Schema(
     thoughtText: {
         type: String,
         required: true,
-        length: 1-280, /*FIXME: */
+        validate: {
+            minLength: 1,
+            maxLength: 280
+        }
     },
     createdAt: {
         type: Date, 
         default: Date.now,
         required: true,
     },
-    username: [
-      {
+    username: {
         type: String,
         required: true,
-        ref: 'User'
-      },
-    ],
+    },
     reactions: [
         {
           reactionId: {
@@ -29,17 +29,21 @@ const thoughtSchema = new Schema(
           reactionBody: {
             type: String,
             required: true,
-            characterMax: 280 /*FIXME:*/
+            validate: {
+                maxlength: 280
+            },
           },
-          username: {type: String, required: true},
+          username: {
+            type: String, 
+            required: true
+          },
           createdAt: {
             type: Date, 
             default: Date.now,
             required: true,
           }
-          
-        },
-      ],
+        }
+    ],
   },
   {
     toJSON: {

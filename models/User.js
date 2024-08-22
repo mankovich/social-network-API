@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const emailRegex = /^(([^<>()\[\]\.,;:\s@"]+(\.[^<>()\[\]\.,;:\s@"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
 // Schema to create User model
 const userSchema = new Schema(
@@ -6,14 +7,14 @@ const userSchema = new Schema(
     username: {
         type: String,
         unique: true,
-        required: true,
-        trimmed: true /*FIXME: */
+        required: [true, 'username is required'],
+        trim: true
     },
-    last: {
+    email: {
         type: String,
         unique: true,
-        required: true,
-        validate: email /*FIXME: */
+        required: [true, 'user email is required'],
+        match: [emailRegex, 'please provide a valid email address']
     },
     thoughts: [
       {
@@ -49,6 +50,7 @@ userSchema
 //     const last = v.split(' ')[1];
 //     this.set({ first, last });
 //   });
+
 
 // Initialize our User model
 const User = model('user', userSchema);
