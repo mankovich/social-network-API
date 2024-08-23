@@ -14,7 +14,7 @@ const userSchema = new Schema(
         type: String,
         unique: true,
         required: true,
-        match: [emailRegex, 'a valid email address is required']
+        match: emailRegex
     },
     thoughts: [
       {
@@ -38,18 +38,12 @@ const userSchema = new Schema(
   }
 );
 
-// Create a virtual property `fullName` with a getter function that ______ TODO: or FIXME:
+// Create a virtual property `friendCount` with a getter function that returns the total number of friends a user has upon query
 userSchema
   .virtual('friendCount')
-  .get(function () {
+  .get(function() {
     return this.friends.length;
-  })
-  // Setter to set the first and last name
-//   .set(function (v) {
-//     const first = v.split(' ')[0];
-//     const last = v.split(' ')[1];
-//     this.set({ first, last });
-//   });
+});
 
 
 // Initialize our User model
