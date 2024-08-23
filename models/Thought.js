@@ -1,75 +1,57 @@
 const { Schema, model } = require('mongoose');
+const reactionSchema = require('./Reaction')
 
-// Schema to create User model
+// Schema to create Thought model
 const thoughtSchema = new Schema(
   {
     thoughtText: {
         type: String,
         required: true,
-        validate: {
-            minLength: 1,
-            maxLength: 280
-        }
+        minLength: 1,
+        maxLength: 280,
     },
     createdAt: {
         type: Date, 
         default: Date.now,
-        required: true,
     },
-    username: {
+    _username: {
         type: String,
         required: true,
     },
-    reactions: [
-        {
-          reactionId: {
-            type: Schema.Types.ObjectId,
-            default: new Schema.Types.ObjectId, /*FIXME: */
-          },
-          reactionBody: {
-            type: String,
-            required: true,
-            validate: {
-                maxlength: 280
-            },
-          },
-          username: {
-            type: String, 
-            required: true
-          },
-          createdAt: {
-            type: Date, 
-            default: Date.now,
-            required: true,
-          }
-        }
-    ],
+    reactions: [reactionSchema],
   },
   {
     toJSON: {
       virtuals: true,
+      getters: true
     },
     id: false,
   }
 );
 
-// Create a virtual property 'reactionCount'
+// Create a virtual property 'reactionCount' and use getter function to tally all reactions to a given thought upon query
 thoughtSchema
   .virtual('reactionCount')
-  // Getter
   .get(function () {
+    console.log(`===============\n\nI'm hoping this attempt to count the reachtions worked: ${this.reactions.length}.\n\n===============`)
     return this.reactions.length;
   })
+  .set(function (count) {
+    const reactionCount = count;
+    this.set({ reactionCount }) /* I have no clue if this is anywhere close to correct */
+  })
 
-//create a virtual property 'thoughtTimestamp' to get the unformatted createdAt date and set it as formatted date
+//create a virtual property 'thoughtTimestamp' using a getter method to format the createdAt new date on query
 thoughtSchema
   .virtual('thoughtTimestamp')
   .get(function () {
-    return this.createdAt.toDateString
+    console.log(`===============\n\nI'm hoping this attempt to format the timestamp works: ${this.createdAt.toLocaleString('en-US')}.\n\n===============`)
+    
+    return this.createdAt.toLocaleString('en-US');
   })
-  .set(function (d) {
-    const createdAt = d;
-    this.set({ createdAt })
+  .set(function (t) {
+    const timestamp = t;
+    this.set({ createdAt: timestamp }); /* DITTO: no clue if this is even approaching what I'm supposed to do */
   });
 
 // Initialize our Thought model

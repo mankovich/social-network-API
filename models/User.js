@@ -7,14 +7,14 @@ const userSchema = new Schema(
     username: {
         type: String,
         unique: true,
-        required: [true, 'username is required'],
-        trim: true
+        required: true,
+        trim: true,
     },
     email: {
         type: String,
         unique: true,
-        required: [true, 'user email is required'],
-        match: [emailRegex, 'please provide a valid email address']
+        required: true,
+        match: emailRegex,
     },
     thoughts: [
       {
@@ -32,15 +32,15 @@ const userSchema = new Schema(
   {
     toJSON: {
       virtuals: true,
+      getters: true,
     },
     id: false,
   }
 );
 
-// Create a virtual property `fullName` that gets and sets the user's full name
+// Create a virtual property `fullName` with a getter function that ______ TODO: or FIXME:
 userSchema
   .virtual('friendCount')
-  // Getter
   .get(function () {
     return this.friends.length;
   })
