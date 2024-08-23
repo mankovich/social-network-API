@@ -32,6 +32,6 @@ const reactionSchema = new Schema(
 
 reactionSchema.virtual('reactionCreated').get(function () {
         return this.createdAt.toLocaleString('en-US');
-    })
+})
 
 module.exports = reactionSchema;

@@ -32,15 +32,15 @@ const thoughtSchema = new Schema(
 // Create a virtual property 'reactionCount' and use getter function to tally all reactions to a given thought upon query
 thoughtSchema.virtual('reactionCount').get(function () {
     return this.reactions.length;
-})
+});
 
 //create a virtual property 'thoughtTimestamp' using a getter method to format the createdAt new date on query
 thoughtSchema.virtual('thoughtCreated').get(function () { 
     return this.createdAt.toLocaleString('en-US');
-  })
+});
 
 
-// Initialize our Thought model
+// Initialize Thought model
 const Thought = model('thought', thoughtSchema);
 
 module.exports = Thought;

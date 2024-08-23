@@ -13,7 +13,7 @@ module.exports = {
     // Get a single user
     async getSingleUser(req, res) {
         try {
-            const user = await User.findOne({ _id: req.params.userId })
+            const user = await User.findOne( { _id: req.params.userId } )
             .select('-__v')  /* I have ABSOLUTELY no clue wtf this is for or supposed to do */
             .populate('thoughts', 'friends'); /* I know what I want to have happen here, but this doesn't appear to be the correct way to go about it, if it's even possible at all...*/ 
 
