@@ -14,13 +14,13 @@ const reactionSeed = [
     {
         _id: new ObjectId(),
         reactionBody: "Bitter you will be less if you trust the force.",
-        username: "felineMstrYoda",
+        username: "felineMasterYoda",
         createdAt: Date.now(),
     },
     {
         _id: new ObjectId(),
         reactionBody: "Unwavering commitment to a schtick, appreciate and enjoy, I do",
-        username: "felineMstrYoda",
+        username: "felineMasterYoda",
         createdAt: Date.now(),
     },
     {
@@ -66,7 +66,7 @@ const thoughtSeed = [
         _id: new ObjectId(),
         thoughtText: "Very comfortable the cardboard boxes are. Take them away the hooman must not.",
         createdAt: Date.now(),
-        username: 'felineMstrYoda',
+        username: 'felineMasterYoda',
         reactions: [reactionSeed[4]._id, reactionSeed[7]._id, reactionSeed[8]._id],
     },
     {
@@ -130,7 +130,7 @@ const userSeed = [
     }, 
     {
         _id: new ObjectId(),
-        username: 'felineMstrYoda',
+        username: 'felineMasterYoda',
         email: 'awed.you.are@email.com',
         thoughts: [thoughtSeed[0]._id],
         friends: []
