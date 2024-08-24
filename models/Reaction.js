@@ -2,10 +2,10 @@ const { Schema, Types } = require('mongoose');
 
 const reactionSchema = new Schema(
     {
-        // reactionId: { /* WHY do I need this prop at all????? doesn't mongoose set the _id automatically anyway?*/
-            // type: Schema.Types.ObjectId,
-            // default: () => new Types.ObjectId(), /* why would I even need to set this default like this */
-        // },
+        reactionId: { 
+            type: Schema.Types.ObjectId,
+            default: () => new Types.ObjectId(), 
+        },
         reactionBody: {
             type: String,
             // required: true,

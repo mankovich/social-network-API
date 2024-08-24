@@ -4,7 +4,10 @@ module.exports = {
     // Get all thoughts
     async getThoughts(req, res) {
         try {
-            const thoughts = await Thought.find() /*.select('-__v').populate('reactions')*/;
+            const thoughts = await Thought.find()
+            .select('-__v')
+            .populate({ path: 'reactions', select: '-__v' });
+
             res.json(thoughts);
         } catch (err) {
             res.status(500).json(err);
@@ -13,7 +16,9 @@ module.exports = {
     // Get a single thought
     async getSingleThought(req, res) {
         try {
-            const thought = await Thought.findOne({ _id: req.params.thoughtId }) /*.select('-__v').populate('reactions')*/; /* NO CLUE about this select() method*/
+            const thought = await Thought.findOne({ _id: req.params.thoughtId })
+            .populate('reactions')
+            .select( '-__v' )
 
             if (!thought) {
                 return res.status(404).json({ message: 'No thought with that ID' });
@@ -37,10 +42,10 @@ module.exports = {
     //update a thought
     async updateThought(req, res) {
         try {
-            const thought = await Thought.findOneAndUpdate(
-                { _id: req.params.thoughtId },
+            const thought = await Thought.findByIdAndUpdate(
+                req.params.thoughtId,
                 { $set: req.body },
-                { runValidators: true, new: true } /* I have no idea about this */
+                { runValidators: true, new: true }
             );
 
             if (!thought) {
@@ -56,10 +61,10 @@ module.exports = {
     // Delete a thought
     async deleteThought(req, res) {
         try {
-            const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
+            const thought = await Thought.findByIdAndDelete(req.params.thoughtId);
 
             if (!thought) {
-                return res.status(404).json({ message: 'No thought with that ID' });
+                return res.status(404).json({ message: 'We cannot locate any thoughts with that ID :( ' });
             }
 
             res.json({ message: 'the thought has been deleted' })
@@ -70,14 +75,14 @@ module.exports = {
 
     async createReaction(req, res) {
         try {
-            const thought = await Thought.findOneAndUpdate(
-                { _id: req.params.thoughtId },
+            const thought = await Thought.findByIdAndUpdate(
+                req.params.thoughtId,
                 { $addToSet: { reactions: req.body } },
                 { runValidators: true, new: true }
             );
             
             if (!thought) {
-                return res.status(404).json({ message: 'No thought found with that ID. Try again'});
+                return res.status(404).json({ message: 'No thought found with that ID. Try again' });
             }
             res.json(thought)
         } catch (err) {
@@ -87,14 +92,14 @@ module.exports = {
 
     async deleteReaction(req, res) {
         try {
-            const thought = await Thought.findOneAndUpdate(
-                { _id: req.params.thoughtId },
+            const thought = await Thought.findByIdAndUpdate(
+                req.params.thoughtId,
                 { $pull: { reaction: { reactionId: req.params.reactionId } } },
-                { runValidators: true, new: true} /* Again, NO CLUE */
+                { runValidators: true, new: true}
             );
 
             if (!thought) {
-                return res.status(404).json({ message: 'No thought with that ID silly' });
+                return res.status(404).json({ message: 'There is no thought with that ID, silly' });
             }
 
             res.json( { message: 'the reaction has been deleted' } )

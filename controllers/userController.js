@@ -4,7 +4,11 @@ module.exports = {
     // Get all users
     async getUsers(req, res) {
         try {
-            const users = await User.find()/*.select('-__v').populate('thoughts', 'friends')*/;
+            const users = await User.find()
+                .select('-__v')
+                .populate({ path: 'thoughts', select: '-__v' })
+                .populate({ path: 'friends', select: '-__v' });
+
             res.json(users);
         } catch (err) {
             res.status(500).json(err);
@@ -12,10 +16,12 @@ module.exports = {
     },
     // Get a single user
     async getSingleUser(req, res) {
+
         try {
-            const user = await User.findOne( { _id: req.params.userId } )
-            .select('-__v')  /* I have ABSOLUTELY no clue wtf this is for or supposed to do */
-            .populate('thoughts', 'friends'); /* I know what I want to have happen here, but this doesn't appear to be the correct way to go about it, if it's even possible at all...*/ 
+            const user = await User.findOne({ _id: req.params.userId })
+                .select('-__v')
+                .populate({ path: 'thoughts', select: '-__v' })
+                .populate({ path: 'friends', select: '-__v' });
 
             if (!user) {
                 return res.status(404).json({ message: 'No user with that ID' });
@@ -23,6 +29,7 @@ module.exports = {
 
             res.json(user);
         } catch (err) {
+            console.log(err)
             res.status(500).json(err);
         }
     },
@@ -37,11 +44,12 @@ module.exports = {
     },
 
     async updateUser(req, res) {
+
         try {
-            const user = await User.findOneAndUpdate(
-                { _id: req.params.userId },
+            const user = await User.findByIdAndUpdate(
+                req.params.userId,
                 { $set: req.body },
-                { runValidators: true, new: true } /* I have no idea about this */
+                { runValidators: true, new: true }
             );
 
             if (!user) {
@@ -66,13 +74,13 @@ module.exports = {
             const thought = await Thought.deleteMany({ _id: { $in: user.thoughts } });
 
             if (!thought) {
-                return res.status(400).json({ 
-                    message: 'The user has been deleted. They had no thoughts that otherwise would have needed to be deleted along with them.' 
+                return res.status(400).json({
+                    message: 'The user has been deleted. They had no thoughts, so no thoughts were deleted along with them.'
                 });
             }
 
             res.json({ message: 'The user and their thoughts have been deleted' })
-            
+
         } catch (err) {
             res.status(500).json(err);
         }
@@ -80,15 +88,16 @@ module.exports = {
 
     //add a friend to a users friends list (array of ids)
     async addFriend(req, res) {
+        
         try {
-            const user = await User.findOneAndUpdate(
-                { _id: req.params.userId },
-                { $addToSet: { friends: req.body } },
-                { runValidators: true, new: true } /* I have no idea about this */
+            const user = await User.findByIdAndUpdate(
+                req.params.userId,
+                { $addToSet: { friends: req.body.friendId } },
+                { runValidators: true, new: true } 
             );
 
             if (!user) {
-                return res.status(404).json({ message: 'No user with that ID' });
+                return res.status(404).json({ message: 'There is no user with that ID' });
             }
 
             res.json(user);
@@ -100,10 +109,10 @@ module.exports = {
     //remove a friend from a users friends list (array of ids)
     async removeFriend(req, res) {
         try {
-            const user = await User.findOneAndUpdate(
-                { _id: req.params.userId },
+            const user = await User.findByIdAndUpdate(
+                req.params.userId,
                 { $pull: { friends: { friendId: req.params.friendId } } },
-                { runValidators: true, new: true } /* ??????? */
+                { runValidators: true, new: true } 
             );
 
             if (!user) {
